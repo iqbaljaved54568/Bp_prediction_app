@@ -28,7 +28,9 @@ st.title("🌡️ Organic Compound Boiling Point Predictor")
 st.markdown(
     "Predicts the **normal boiling point** of an organic compound from its "
     "**SMILES** string, using a LightGBM QSPR model (10 molecular descriptors, "
-    "trained on DIPPR data)."
+    "trained on NIST- and DIPPR-sourced data). Companion tool for: Javed et al., "
+    "*Interpretable and Parsimonious QSPR Modelling of the Normal Boiling Point "
+    "of Structurally Diverse Organic Compounds* (submitted to *J. Chem. Inf. Model.*)."
 )
 
 smiles_input = st.text_input(
@@ -105,6 +107,13 @@ if smiles_input:
 
 st.divider()
 st.caption(
+    "Model: LightGBM, 10 descriptors (1 RDKit-2D + 9 Mordred). "
+    "Trained on NIST- and DIPPR-sourced boiling point data. "
+    "Predictions outside the applicability domain, or for compounds that "
+    "decompose/sublime rather than boil cleanly, may not reflect physical reality. "
+    "Full model code and reproducibility archive: "
+    "[BP-boiling-point-model](https://github.com/iqbaljaved54568/BP-boiling-point-model)."
+)
     "Model: LightGBM, 10 descriptors (1 RDKit-2D + 9 Mordred). "
     "Trained on DIPPR normal boiling point data. "
     "Predictions outside the applicability domain, or for compounds that "
