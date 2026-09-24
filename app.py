@@ -46,8 +46,8 @@ with example_col2:
     if st.button("Try benzene"):
         smiles_input = "c1ccccc1"
 with example_col3:
-    if st.button("Try aspirin"):
-        smiles_input = "CC(=O)OC1=CC=CC=C1C(=O)O"
+    if st.button("Try chlorobenzene"):
+        smiles_input = "c1ccc(Cl)cc1"
 
 if smiles_input:
     mol_preview = Chem.MolFromSmiles(smiles_input)
