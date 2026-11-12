@@ -7,18 +7,17 @@ import numpy as np
 import joblib
 
 from rdkit import Chem
-from rdkit.Chem import AllChem
 from rdkit.Chem.Descriptors import descList
 from rdkit import RDLogger
 RDLogger.DisableLog("rdApp.*")
 
 from mordred import Calculator, descriptors as mord_desc
 
-RANDOM_SEED = 42
 MORDRED_NAMES = ["MATS1se", "GATS1m", "ATSC1c", "BCUTi-1h", "ATS3m",
                   "AATS1i", "ATSC1i", "BCUTi-1l", "AATSC1d"]
 
-_mordred_calc = Calculator(mord_desc, ignore_3D=False)
+_mordred_calc = Calculator([d for d in Calculator(mord_desc, ignore_3D=True).descriptors
+                            if str(d) in MORDRED_NAMES])
 _rdkit_2d_map = dict(descList)
 
 
@@ -31,7 +30,8 @@ def smiles_to_descriptors(smiles: str, feature_order: list) -> np.ndarray:
     """
     Reproduces the training pipeline exactly:
       - rdkit2d_Ipc  <- computed on the plain 2D mol (Chem.MolFromSmiles)
-      - mordred_*    <- computed on the H-explicit, UFF-optimized 3D mol
+      - mordred_*    <- computed on the H-explicit molecule (all nine are 2D;
+                        identical to the values used in training)
     Returns a (1, n_features) array in `feature_order`, or raises DescriptorError.
     """
     smiles = smiles.strip()
@@ -48,25 +48,11 @@ def smiles_to_descriptors(smiles: str, feature_order: list) -> np.ndarray:
     except Exception as e:
         raise DescriptorError(f"Failed computing rdkit2d_Ipc: {e}")
 
-    # ---- 3D embed + UFF optimize (same settings as training) ----
-    mol3d = Chem.AddHs(mol2d)
-    embed_status = AllChem.EmbedMolecule(
-        mol3d, randomSeed=RANDOM_SEED,
-        useExpTorsionAnglePrefs=True, useBasicKnowledge=True,
-    )
-    if embed_status != 0:
-        raise DescriptorError(
-            "3D conformer embedding failed for this molecule. "
-            "This compound cannot currently be scored by the model."
-        )
-    opt_status = AllChem.UFFOptimizeMolecule(mol3d, maxIters=500)
-    if opt_status != 0:
-        raise DescriptorError(
-            "3D geometry optimization (UFF) failed to converge for this molecule."
-        )
+    # ---- all ten descriptors are 2D: add explicit H, no 3D conformer needed ----
+    molh = Chem.AddHs(mol2d)
 
     try:
-        mordred_res = _mordred_calc(mol3d).asdict()
+        mordred_res = _mordred_calc(molh).asdict()
     except Exception as e:
         raise DescriptorError(f"Mordred descriptor calculation failed: {e}")
 
