@@ -3,7 +3,7 @@
 Predicts the normal boiling point (K) of an organic compound from its SMILES string, with an applicability-domain check.
 
 - **Live app:** https://bppredictionapp-eghwsz9hbquq3kcrcgjfk5.streamlit.app/
-- **Archive:** https://doi.org/10.5281/zenodo.22311228
+- **Archive:** https://doi.org/10.5281/zenodo.22311227
 - **Model code and data:** https://github.com/iqbaljaved54568/QSPR-model-to-predict-the-normal-boiling-point-of-organic-compounds (https://doi.org/10.5281/zenodo.22311330)
 
 Paper: Javed, M. I.; Waters, L.; Belton, D.; Cooke, D. *A Ten-Descriptor LightGBM Model for Normal Boiling Point Prediction of Structurally Diverse Organic Compounds: Validation, Applicability Domain and Online Deployment.* Submitted to *ACS Omega*, 2026.
